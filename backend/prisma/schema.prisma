@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  EMPLOYEE
+  MANAGER
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  IN_PROGRESS
+  CLOSED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(EMPLOYEE)
+  managerId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  manager           User?      @relation("ManagerEmployee", fields: [managerId], references: [id], onDelete: SetNull)
+  employees         User[]     @relation("ManagerEmployee")
+  createdRequests   Request[]  @relation("CreatedRequests")
+  assignedRequests  Request[]  @relation("AssignedRequests")
+  approvedRequests  Request[]  @relation("ApprovedRequests")
+
+  @@index([email])
+  @@index([managerId])
+  @@map("users")
+}
+
+model Request {
+  id            String        @id @default(uuid())
+  title         String
+  description   String
+  status        RequestStatus @default(PENDING)
+  createdById   String
+  assignedToId  String
+  approvedById  String?
+  approvedAt    DateTime?
+  closedAt      DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  createdBy  User  @relation("CreatedRequests", fields: [createdById], references: [id], onDelete: Cascade)
+  assignedTo User  @relation("AssignedRequests", fields: [assignedToId], references: [id], onDelete: Cascade)
+  approvedBy User? @relation("ApprovedRequests", fields: [approvedById], references: [id], onDelete: SetNull)
+
+  @@index([createdById])
+  @@index([assignedToId])
+  @@index([approvedById])
+  @@index([status])
+  @@map("requests")
+}
