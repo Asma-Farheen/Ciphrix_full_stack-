@@ -34,11 +34,11 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relations
-  manager           User?      @relation("ManagerEmployee", fields: [managerId], references: [id], onDelete: SetNull)
-  employees         User[]     @relation("ManagerEmployee")
-  createdRequests   Request[]  @relation("CreatedRequests")
-  assignedRequests  Request[]  @relation("AssignedRequests")
-  approvedRequests  Request[]  @relation("ApprovedRequests")
+  manager          User?     @relation("ManagerEmployee", fields: [managerId], references: [id], onDelete: SetNull)
+  employees        User[]    @relation("ManagerEmployee")
+  createdRequests  Request[] @relation("CreatedRequests")
+  assignedRequests Request[] @relation("AssignedRequests")
+  approvedRequests Request[] @relation("ApprovedRequests")
 
   @@index([email])
   @@index([managerId])
@@ -46,22 +46,26 @@ model User {
 }
 
 model Request {
-  id            String        @id @default(uuid())
-  title         String
-  description   String
-  status        RequestStatus @default(PENDING)
-  createdById   String
-  assignedToId  String
-  approvedById  String?
-  approvedAt    DateTime?
-  closedAt      DateTime?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id           String        @id @default(uuid())
+  title        String
+  description  String
+  status       RequestStatus @default(PENDING)
+  createdById  String
+  assignedToId String
+  approvedById String?
+  approvedAt   DateTime?
+  closedAt     DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 
   // Relations
   createdBy  User  @relation("CreatedRequests", fields: [createdById], references: [id], onDelete: Cascade)
   assignedTo User  @relation("AssignedRequests", fields: [assignedToId], references: [id], onDelete: Cascade)
   approvedBy User? @relation("ApprovedRequests", fields: [approvedById], references: [id], onDelete: SetNull)
+
+  // Manager relation for approval workflow
+  managerId String?
+  // manager relation omitted (scalar only)
 
   @@index([createdById])
   @@index([assignedToId])
