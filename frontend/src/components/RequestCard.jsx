@@ -18,7 +18,7 @@ const RequestCard = ({ request, currentUser, onUpdate }) => {
     const canApprove =
         currentUser.role === 'MANAGER' &&
         request.status === 'PENDING' &&
-        request.assignedTo.managerId === currentUser.id;
+        request.assignedTo?.managerId === currentUser.id;
 
     const canAction =
         request.assignedToId === currentUser.id &&
