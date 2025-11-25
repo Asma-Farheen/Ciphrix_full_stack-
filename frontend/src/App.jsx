@@ -15,7 +15,6 @@ function App() {
                 <div className="app">
                     <Navbar />
                     <Routes>
-                        <Route path="/" element={<Home />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route
@@ -26,6 +25,7 @@ function App() {
                                 </ProtectedRoute>
                             }
                         />
+                        <Route path="/" element={<Home />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                 </div>
