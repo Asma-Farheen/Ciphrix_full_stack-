@@ -24,9 +24,8 @@ const Register = () => {
         // Fetch managers for the dropdown
         const fetchManagers = async () => {
             try {
-                const response = await usersAPI.getAllUsers();
-                const managerList = response.data.data.users.filter(u => u.role === 'MANAGER');
-                setManagers(managerList);
+                const response = await usersAPI.getManagers();
+                setManagers(response.data.data.managers);
             } catch (err) {
                 console.error('Failed to fetch managers:', err);
             }

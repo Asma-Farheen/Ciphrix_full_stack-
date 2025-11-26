@@ -16,6 +16,19 @@ export const getAllUsers = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @route   GET /api/users/managers
+ * @desc    Get all managers (public for registration)
+ * @access  Public
+ */
+export const getManagers = asyncHandler(async (req, res) => {
+    const managers = await userService.getUsersByRole('MANAGER');
+
+    res.status(200).json(
+        createResponse(true, 'Managers retrieved successfully', { managers })
+    );
+});
+
+/**
  * @route   GET /api/users/employees
  * @desc    Get all employees
  * @access  Private (Manager only)
